@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PartyGuess – Category</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 450px;
+      background: #1b1b1b;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #fff;
+      background: #333;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffd000;
+      margin-bottom: 20px;
+    }
+
+    .words-box {
+      background: #292929;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      background: #ffd000;
+      color: #000;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="close-btn" onclick="location.href='index.html'">✖</div>
+
+  <h1 id="catTitle"></h1>
+
+  <h3>Words:</h3>
+  <div id="wordsBox" class="words-box"></div>
+
+  <h3>Link:</h3>
+  <input id="shareLink" readonly style="
+    width:100%; padding:12px; border-radius:10px; border:none;
+    background:#292929; color:#fff; margin-bottom:20px;
+  ">
+
+  <button onclick="copyLink()">Copy link</button>
+</div>
+
+<script type="module">
+  import { initializeApp } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+  import { 
+    getFirestore, doc, getDoc 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBCgS8YQfKPE62k9zD-CO9Joha7pUmPQec",
+    authDomain: "mimica-app-2025.firebaseapp.com",
+    projectId: "mimica-app-2025",
+    storageBucket: "mimica-app-2025.firebasestorage.app",
+    messagingSenderId: "1077146397483",
+    appId: "1:1077146397483:web:140f0b56e976899d51736e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // --- GET ID FROM URL ---
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  async function loadCategory() {
+    if (!id) {
+      document.body.innerHTML = "<h1 style='color:white;text-align:center;'>Invalid ID</h1>";
+      return;
+    }
+
+    const ref = doc(db, "categories", id);
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists()) {
+      document.body.innerHTML = "<h1 style='color:white;text-align:center;'>Category not found</h1>";
+      return;
+    }
+
+    const cat = snapshot.data();
+
+    document.getElementById("catTitle").innerText = cat.title;
+    document.getElementById("wordsBox").innerText = cat.words.join("\n");
+
+    const encodedWords = cat.words.join(";");
+    const generatedLink =
+      `partyguess://share?title=${encodeURIComponent(cat.title)}&words=${encodeURIComponent(encodedWords)}`;
+
+    document.getElementById("shareLink").value = generatedLink;
+  }
+
+  loadCategory();
+
+  // --- COPY BUTTON ---
+  window.copyLink = function () {
+    const input = document.getElementById("shareLink");
+    navigator.clipboard.writeText(input.value);
+    alert("Link copied!");
+  };
+</script>
+
+</body>
+</html>

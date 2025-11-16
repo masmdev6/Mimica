@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charades</title>
+
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #ffd000;
+      text-align: center;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffd000;
+    }
+
+    .create-btn {
+      background: #ffd000;
+      color: #000;
+      padding: 15px;
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      font-size: 20px;
+      cursor: pointer;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #222;
+      color: #fff;
+      margin-bottom: 20px;
+      font-size: 17px;
+    }
+
+    .country-box {
+      background: #222;
+      padding: 18px;
+      border-radius: 14px;
+      font-size: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .country-box:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+
+    .category-card {
+      background: #1f1f1f;
+      padding: 20px;
+      margin: 12px 0;
+      border-radius: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.25s;
+    }
+
+    .category-card:hover {
+      transform: translateX(6px);
+      background: #272727;
+    }
+
+    .empty-text {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 18px;
+      color: #bbb;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Charades</h1>
+
+  <button class="create-btn" onclick="location.href='create.html'">
+    ➕ Create New Category
+  </button>
+
+  <h2>Select a Country</h2>
+
+  <div id="countryGrid" style="
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:15px;
+    margin-bottom:25px;"></div>
+
+  <input id="searchInput" placeholder="🔍 Search category..." oninput="loadCategories()">
+
+  <div id="categoryList"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+  import { initializeApp } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+  import { 
+    getFirestore, collection, getDocs, query, where 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBCgS8YQfKPE62k9zD-CO9Joha7pUmPQec",
+    authDomain: "mimica-app-2025.firebaseapp.com",
+    projectId: "mimica-app-2025",
+    storageBucket: "mimica-app-2025.firebasestorage.app",
+    messagingSenderId: "1077146397483",
+    appId: "1:1077146397483:web:140f0b56e976899d51736e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ----------------------------
+  // FLAGS LIST
+  // ----------------------------
+  const FLAGS = {
+    us:"🇺🇸", uk:"🇬🇧", pt:"🇵🇹", br:"🇧🇷", es:"🇪🇸", fr:"🇫🇷", de:"🇩🇪", it:"🇮🇹",
+    jp:"🇯🇵", kr:"🇰🇷", cn:"🇨🇳", mx:"🇲🇽", ar:"🇦🇷", cl:"🇨🇱", co:"🇨🇴",
+    ca:"🇨🇦", au:"🇦🇺", nz:"🇳🇿", in:"🇮🇳", ru:"🇷🇺", ua:"🇺🇦", pl:"🇵🇱",
+    se:"🇸🇪", no:"🇳🇴", fi:"🇫🇮", dk:"🇩🇰", nl:"🇳🇱", be:"🇧🇪", ch:"🇨🇭",
+    at:"🇦🇹", gr:"🇬🇷", tr:"🇹🇷", il:"🇮🇱", eg:"🇪🇬", za:"🇿🇦", ng:"🇳🇬",
+    sa:"🇸🇦", ae:"🇦🇪", qa:"🇶🇦", sg:"🇸🇬", th:"🇹🇭", ph:"🇵🇭", id:"🇮🇩",
+    my:"🇲🇾", vn:"🇻🇳", kp:"🇰🇵", ro:"🇷🇴", hu:"🇭🇺", cz:"🇨🇿", sk:"🇸🇰",
+    si:"🇸🇮", hr:"🇭🇷", bg:"🇧🇬", ie:"🇮🇪", is:"🇮🇸"
+  };
+
+  let selectedCountry = null;
+  let allCategories = [];
+
+  // -----------------------------------------------------
+  // LOAD ALL CATEGORIES FROM FIREBASE
+  // -----------------------------------------------------
+  async function fetchCategories() {
+    const snap = await getDocs(collection(db, "categories"));
+    allCategories = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    loadCountries();
+    loadCategories();
+  }
+
+  // -----------------------------------------------------
+  // SHOW COUNTRY LIST
+  // -----------------------------------------------------
+  function loadCountries() {
+    const grid = document.getElementById("countryGrid");
+    grid.innerHTML = "";
+
+    const uniqueCountries = [...new Set(allCategories.map(cat => cat.country))];
+
+    uniqueCountries.forEach(code => {
+      const div = document.createElement("div");
+      div.className = "country-box";
+      div.innerHTML = FLAGS[code] || "🌍";
+      div.onclick = () => {
+        selectedCountry = code;
+        loadCategories();
+      };
+      grid.appendChild(div);
+    });
+  }
+
+  // -----------------------------------------------------
+  // SHOW CATEGORIES FOR SELECTED COUNTRY
+  // -----------------------------------------------------
+  function loadCategories() {
+    const list = document.getElementById("categoryList");
+    const search = document.getElementById("searchInput").value.toLowerCase();
+
+    list.innerHTML = "";
+
+    if (!selectedCountry) {
+      list.innerHTML = `<div class='empty-text'>Select a country</div>`;
+      return;
+    }
+
+    const filtered = allCategories.filter(
+      cat => cat.country === selectedCountry &&
+             cat.title.toLowerCase().includes(search)
+    );
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class='empty-text'>No categories found</div>`;
+      return;
+    }
+
+    filtered.forEach(cat => {
+      const div = document.createElement("div");
+      div.className = "category-card";
+      div.innerHTML = `
+        <span>${cat.title}</span>
+        <span>➡️</span>
+      `;
+      div.onclick = () => {
+        location.href = `view.html?id=${cat.id}`;
+      };
+      list.appendChild(div);
+    });
+  }
+
+  // INITIAL LOAD
+  fetchCategories();
+
+</script>
+
+</body>
+</html>

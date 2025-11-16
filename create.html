@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charades – Create Category</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 450px;
+      background: #1b1b1b;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #fff;
+      background: #333;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffd000;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+      background: #292929;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .generate { background: #ffd000; color: #000; }
+    .copy { background: #444; color: #fff; }
+
+    .outputBox {
+      background: #222;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 15px;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="close-btn" onclick="location.href='index.html'">✖</div>
+
+    <h1>Create Category</h1>
+
+    <label>Category Title</label>
+    <input id="titleInput" placeholder="Ex: Animals" />
+
+    <label>Language / Country</label>
+    <select id="countryInput">
+      <option value="us">🇺🇸 English (US)</option>
+      <option value="uk">🇬🇧 English (UK)</option>
+      <option value="pt">🇵🇹 Portuguese (Portugal)</option>
+      <option value="br">🇧🇷 Portuguese (Brazil)</option>
+      <option value="es">🇪🇸 Spanish</option>
+      <option value="fr">🇫🇷 French</option>
+      <option value="de">🇩🇪 German</option>
+      <option value="it">🇮🇹 Italian</option>
+      <option value="jp">🇯🇵 Japanese</option>
+      <option value="kr">🇰🇷 Korean</option>
+      <option value="cn">🇨🇳 Chinese</option>
+
+      <option value="mx">🇲🇽 Mexico</option>
+      <option value="ar">🇦🇷 Argentina</option>
+      <option value="cl">🇨🇱 Chile</option>
+      <option value="co">🇨🇴 Colombia</option>
+
+      <option value="ca">🇨🇦 Canada</option>
+      <option value="au">🇦🇺 Australia</option>
+      <option value="nz">🇳🇿 New Zealand</option>
+
+      <option value="in">🇮🇳 India</option>
+      <option value="ru">🇷🇺 Russia</option>
+      <option value="ua">🇺🇦 Ukraine</option>
+      <option value="pl">🇵🇱 Poland</option>
+
+      <option value="se">🇸🇪 Sweden</option>
+      <option value="no">🇳🇴 Norway</option>
+      <option value="fi">🇫🇮 Finland</option>
+      <option value="dk">🇩🇰 Denmark</option>
+
+      <option value="nl">🇳🇱 Netherlands</option>
+      <option value="be">🇧🇪 Belgium</option>
+      <option value="ch">🇨🇭 Switzerland</option>
+      <option value="at">🇦🇹 Austria</option>
+
+      <option value="gr">🇬🇷 Greece</option>
+      <option value="tr">🇹🇷 Turkey</option>
+      <option value="il">🇮🇱 Israel</option>
+
+      <option value="eg">🇪🇬 Egypt</option>
+      <option value="za">🇿🇦 South Africa</option>
+      <option value="ng">🇳🇬 Nigeria</option>
+
+      <option value="sa">🇸🇦 Saudi Arabia</option>
+      <option value="ae">🇦🇪 UAE</option>
+      <option value="qa">🇶🇦 Qatar</option>
+
+      <option value="sg">🇸🇬 Singapore</option>
+      <option value="th">🇹🇭 Thailand</option>
+      <option value="ph">🇵🇭 Philippines</option>
+      <option value="id">🇮🇩 Indonesia</option>
+      <option value="my">🇲🇾 Malaysia</option>
+      <option value="vn">🇻🇳 Vietnam</option>
+      <option value="kp">🇰🇵 North Korea</option>
+
+      <option value="ro">🇷🇴 Romania</option>
+      <option value="hu">🇭🇺 Hungary</option>
+      <option value="cz">🇨🇿 Czech Republic</option>
+      <option value="sk">🇸🇰 Slovakia</option>
+      <option value="si">🇸🇮 Slovenia</option>
+      <option value="hr">🇭🇷 Croatia</option>
+      <option value="bg">🇧🇬 Bulgaria</option>
+
+      <option value="ie">🇮🇪 Ireland</option>
+      <option value="is">🇮🇸 Iceland</option>
+    </select>
+
+    <label>Words (1 per line)</label>
+    <textarea id="wordsInput" rows="6" placeholder="Dog&#10;Cat&#10;Elephant"></textarea>
+
+    <button class="generate" onclick="generateAndSave()">Generate + Save</button>
+    <button class="copy" onclick="copyLink()">Copy Link</button>
+
+    <div id="output" class="outputBox">Your generated link will appear here...</div>
+  </div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+  import { 
+    getFirestore, collection, addDoc 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBCgS8YQfKPE62k9zD-CO9Joha7pUmPQec",
+    authDomain: "mimica-app-2025.firebaseapp.com",
+    projectId: "mimica-app-2025",
+    storageBucket: "mimica-app-2025.firebasestorage.app",
+    messagingSenderId: "1077146397483",
+    appId: "1:1077146397483:web:140f0b56e976899d51736e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ---------------------------------------
+  // GENERATE LINK
+  // ---------------------------------------
+  function generateLink() {
+    const title = document.getElementById('titleInput').value.trim();
+    const rawWords = document.getElementById('wordsInput').value.trim();
+    const country = document.getElementById('countryInput').value;
+
+    if (!title || !rawWords) {
+      document.getElementById('output').innerText = "Please fill in all fields!";
+      return null;
+    }
+
+    const wordsList = rawWords
+      .split("\n")
+      .map(w => w.trim())
+      .filter(w => w.length > 0);
+
+    const encodedWords = wordsList.join(";");
+
+    const link =
+      `charades://share?title=${encodeURIComponent(title)}&words=${encodeURIComponent(encodedWords)}`;
+
+    document.getElementById('output').innerText = link;
+
+    return { title, wordsList, link, country };
+  }
+
+  // ---------------------------------------
+  // SAVE TO FIREBASE
+  // ---------------------------------------
+  async function generateAndSave() {
+    const result = generateLink();
+    if (!result) return;
+
+    await addDoc(collection(db, "categories"), {
+      title: result.title,
+      words: result.wordsList,
+      country: result.country,
+      createdAt: Date.now()
+    });
+
+    alert("Category saved online!");
+  }
+
+  // ---------------------------------------
+  // COPY LINK BUTTON
+  // ---------------------------------------
+  function copyLink() {
+    const text = document.getElementById('output').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Link copied!");
+    });
+  }
+
+  // expose functions globally
+  window.generateAndSave = generateAndSave;
+  window.copyLink = copyLink;
+
+</script>
+
+</body>
+</html>

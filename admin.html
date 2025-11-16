@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartyGuess – Admin Panel</title>
+
+<style>
+  body {
+    background: #111;
+    color: #fff;
+    font-family: Arial;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #ffd000;
+    margin-bottom: 20px;
+  }
+
+  .login-box {
+    max-width: 350px;
+    margin: auto;
+    background: #1c1c1c;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(255,255,0,0.2);
+  }
+
+  .login-box input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 15px;
+    background: #292929;
+    color: #fff;
+  }
+
+  .login-box button {
+    width: 100%;
+    padding: 12px;
+    background: #ffd000;
+    border: none;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .category {
+    background: #1f1f1f;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .del {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+</style>
+
+</head>
+<body>
+
+<h1>Admin Panel</h1>
+
+<div id="loginArea" class="login-box">
+  <h3 style="text-align:center;">Admin Login</h3>
+
+  <input id="passwordInput" type="password" placeholder="Enter admin password">
+
+  <button onclick="verifyPassword()">Login</button>
+</div>
+
+<div id="adminContent" style="display:none;">
+  <h2>All Categories</h2>
+  <div id="catList"></div>
+</div>
+
+<script>
+
+// ------------------------------
+//  CHANGE YOUR PASSWORD HERE
+// ------------------------------
+const ADMIN_PASSWORD = "Negreiros6";   // <---- ALTERE AQUI SE QUISER
+// ------------------------------
+
+function verifyPassword() {
+  const typed = document.getElementById("passwordInput").value;
+
+  if (typed === ADMIN_PASSWORD) {
+    document.getElementById("loginArea").style.display = "none";
+    document.getElementById("adminContent").style.display = "block";
+    loadCategories();
+  } else {
+    alert("Incorrect password.");
+  }
+}
+
+function loadCategories() {
+  const stored = JSON.parse(localStorage.getItem("categories") || "[]");
+  const box = document.getElementById("catList");
+  box.innerHTML = "";
+
+  if (stored.length === 0) {
+    box.innerHTML = "<p>No categories found.</p>";
+    return;
+  }
+
+  stored.forEach((cat, index) => {
+    const div = document.createElement("div");
+    div.className = "category";
+
+    div.innerHTML = `
+      <div>
+        <strong>${cat.title}</strong><br>
+        <small>Country: ${cat.country}</small>
+      </div>
+
+      <button class="del" onclick="deleteCat(${index})">Delete</button>
+    `;
+
+    box.appendChild(div);
+  });
+}
+
+function deleteCat(i) {
+  if (!confirm("Are you sure you want to delete this category?")) return;
+
+  const stored = JSON.parse(localStorage.getItem("categories") || "[]");
+  stored.splice(i, 1);
+
+  localStorage.setItem("categories", JSON.stringify(stored));
+
+  loadCategories();
+}
+
+</script>
+
+</body>
+</html>
